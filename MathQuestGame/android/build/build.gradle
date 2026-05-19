@@ -1,0 +1,67 @@
+// Android Build Configuration for MathQuest Game
+// This file configures the Gradle build for the custom Android template
+
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace "com.mathquest.game"
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.mathquest.game"
+        minSdk 24  // Android 7.0 Nougat minimum for Godot 4.x
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+
+        // Native library configuration
+        ndk {
+            abiFilters += ["arm64-v8a", "armeabi-v7a"]
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
+            jniDebuggable true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    // Configure APK splits for architecture-specific builds
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'arm64-v8a', 'armeabi-v7a'
+            universalApk true
+        }
+    }
+}
+
+dependencies {
+    // Godot Engine Library
+    implementation files('libs/godot-lib.release.aar')
+
+    // Play Games Services (uncomment when implementing)
+    // implementation 'com.google.android.gms:play-services-games:23.0.0'
+    // implementation 'com.google.android.gms:play-services-auth:20.7.0'
+
+    // Firebase Analytics (optional - uncomment when implementing)
+    // implementation platform('com.google.firebase:firebase-bom:32.7.0')
+    // implementation 'com.google.firebase:firebase-analytics'
+
+    // AndroidX Core
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+}

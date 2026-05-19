@@ -1,0 +1,78 @@
+# Godot 4 Main Scene - MathQuest Game Entry Point
+# This is the root scene that loads all game systems
+
+[gd_scene load_steps=8 format=3 uid="uid://main_scene_001"]
+
+[ext_resource type="Script" path="res://scripts/autoload/GameManager.gd" id="game_manager"]
+[ext_resource type="Script" path="res://scripts/autoload/AudioManager.gd" id="audio_manager"]
+[ext_resource type="Script" path="res://scripts/autoload/SaveManager.gd" id="save_manager"]
+[ext_resource type="Script" path="res://scripts/autoload/DifficultyManager.gd" id="difficulty_manager"]
+[ext_resource type="Script" path="res://scripts/autoload/NativeBridge.gd" id="native_bridge"]
+
+[sub_resource type="Environment" id="Environment_001"]
+ambient_light_source = 2
+ambient_light_color = Color(0.7, 0.75, 0.85, 1)
+ambient_light_energy = 0.4
+fog_enabled = false
+
+[node name="Main" type="Node"]
+script = ExtResource("game_manager")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_001")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." groups=["music_player"]]
+volume_db = -10.0
+bus = "Music"
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." groups=["sfx_player"]]
+volume_db = -5.0
+bus = "SFX"
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707, -0.707, 0, 0.707, 0.707, 0, 3, 5)
+fov = 65.0
+current = true
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866, -0.433, 0.25, 0, 0.5, 0.866, -0.5, -0.75, 0.433, 5, 10, 8)
+light_color = Color(1, 0.98, 0.9, 1)
+light_energy = 2.5
+shadow_enabled = true
+shadow_max_distance = 20
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="UIBackground" type="ColorRect" parent="UILayer"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+color = Color(0.1, 0.12, 0.15, 0.85)
+
+[node name="TitleLabel" type="Label" parent="UILayer"]
+offset_left = 50.0
+offset_top = 30.0
+offset_right = 400.0
+offset_bottom = 80.0
+text = "MathQuest: Al-Khwarizmi's Balance"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StartButton" type="Button" parent="UILayer"]
+offset_left = 150.0
+offset_top = 400.0
+offset_right = 350.0
+offset_bottom = 460.0
+text = "Begin Journey"
+
+[node name="SettingsButton" type="Button" parent="UILayer"]
+offset_left = 150.0
+offset_top = 480.0
+offset_right = 350.0
+offset_bottom = 540.0
+text = "Settings"
+
+[connection signal="pressed" from="UILayer/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="UILayer/SettingsButton" to="." method="_on_settings_button_pressed"]

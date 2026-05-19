@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mathquest.game"
+    android:versionCode="1"
+    android:versionName="1.0.0"
+    android:installLocation="auto">
+
+    <!-- Godot Engine Required Features -->
+    <uses-feature android:name="android.hardware.vulkan.level" android:required="false"/>
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
+    <uses-feature android:name="android.hardware.gamepad" android:required="false"/>
+
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    
+    <!-- Optional: For Play Games Services -->
+    <!-- <uses-permission android:name="android.permission.GET_ACCOUNTS"/> -->
+    
+    <!-- Optional: For Firebase Analytics -->
+    <!-- <uses-permission android:name="android.permission.WAKE_LOCK"/> -->
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/icon"
+        android:label="@string/app_name"
+        android:theme="@style/GodotAppTheme"
+        android:isGame="true"
+        android:requestLegacyExternalStorage="false"
+        android:hardwareAccelerated="true"
+        android:largeHeap="false">
+
+        <!-- Main Godot Activity -->
+        <activity
+            android:name="org.godotengine.godot.Godot"
+            android:label="@string/app_name"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|density|keyboard|navigation|screenLayout|uiMode"
+            android:resizeableActivity="false"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <!-- File provider for sharing -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
+
+        <!-- Meta-data for Godot plugins -->
+        <meta-data
+            android:name="org.godotengine.plugin.v2.MathQuestPlugin"
+            android:value="com.mathquest.plugin.MathQuestPlugin"/>
+
+    </application>
+</manifest>

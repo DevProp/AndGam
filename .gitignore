@@ -1,5 +1,21 @@
 ```
 # Build artifacts
+android/build/
+dist/
+build/
+
+# Dependencies
+node_modules/
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Editors
+.vscode/
+.idea/
+
+# Environment
 MathQuestGame/android/build/
 MathQuestGame/project.godot
 *.tscn
@@ -53,6 +69,44 @@ wheels/
 .env.local
 *.env.*
 
+# Logs and temp files
+*.log
+*.tmp
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Python specific
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git/
+.mypy_cache/
+.pytest_cache/
+.hypothesis/
+
+# Godot specific
+.godot/
+*.import
+export_presets.cfg
+
+# Android specific
+*.apk
+*.aab
+local.properties
 # IDE
 .vscode/
 .idea/

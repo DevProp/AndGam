@@ -1,0 +1,190 @@
+# Godot 4 Stage 3 Scene - Al-Khwarizmi's Balance Scale
+# Vertical slice implementation with full physics simulation
+
+[gd_scene load_steps=12 format=3 uid="uid://stage3_balance_001"]
+
+[ext_resource type="Script" path="res://scripts/realms/stage3/BalanceScale.gd" id="balance_script"]
+[ext_resource type="Script" path="res://scripts/realms/stage3/WeightBlock.gd" id="weight_script"]
+[ext_resource type="Script" path="res://scripts/realms/stage3/EquationGenerator.gd" id="equation_script"]
+
+[sub_resource type="Environment" id="Environment_stage3"]
+ambient_light_source = 2
+ambient_light_color = Color(0.85, 0.78, 0.65, 1)
+ambient_light_energy = 0.5
+fog_enabled = false
+ssr_enabled = false
+ssao_enabled = false
+
+[node name="Stage3_OasisOfBalance" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_stage3")
+
+[node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
+volume_db = -8.0
+bus = "Music"
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.643, -0.766, 0, 0.766, 0.643, 0, 4, 3.5)
+fov = 60.0
+current = true
+
+[node name="KeyLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.819, -0.469, 0.331, 0, 0.574, 0.819, -0.574, -0.669, 0.469, 3, 8, 6)
+light_color = Color(1, 0.92, 0.75, 1)
+light_energy = 2.8
+shadow_enabled = true
+shadow_max_distance = 15
+
+[node name="FillLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 4, 3)
+light_color = Color(0.7, 0.85, 1, 1)
+light_energy = 0.8
+omni_range = 12
+
+[node name="RimLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 2)
+light_color = Color(1, 0.75, 0.5, 1)
+light_energy = 1.0
+omni_range = 10
+
+[node name="DesertFloor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+mesh = PrimitiveMesh.new()
+mesh.size = Vector3(20, 0.2, 20)
+surface_material_override/0 = null
+
+[node name="OasisWater" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, -3)
+mesh = PrimitiveMesh.new()
+mesh.size = Vector3(8, 0.1, 4)
+
+[node name="LibraryBuilding" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -8)
+visible_instance_layers = 1
+
+[node name="BalanceScaleRoot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("balance_script")
+
+[node name="ScaleBase" type="StaticBody3D" parent="BalanceScaleRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BalanceScaleRoot/ScaleBase"]
+shape = BoxShape3D.new()
+shape.size = Vector3(3, 0.3, 1.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="BalanceScaleRoot/ScaleBase"]
+mesh = BoxMesh.new()
+mesh.size = Vector3(3, 0.3, 1.5)
+
+[node name="PivotPoint" type="Node3D" parent="BalanceScaleRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+
+[node name="ScaleArm" type="RigidBody3D" parent="PivotPoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+mass = 5.0
+physics_material_override = null
+can_sleep = false
+continuous_cd = true
+contact_monitor = true
+max_contacts_reported = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PivotPoint/ScaleArm"]
+shape = BoxShape3D.new()
+shape.size = Vector3(4, 0.15, 0.25)
+
+[node name="MeshInstance3D" parent="PivotPoint/ScaleArm" type="MeshInstance3D"]
+mesh = BoxMesh.new()
+mesh.size = Vector3(4, 0.15, 0.25)
+
+[node name="LeftPlatformSocket" type="Node3D" parent="PivotPoint/ScaleArm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)
+
+[node name="RightPlatformSocket" type="Node3D" parent="PivotPoint/ScaleArm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
+
+[node name="LeftPlatform" type="Area3D" parent="BalanceScaleRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.5, 0)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BalanceScaleRoot/LeftPlatform"]
+shape = CylinderShape3D.new()
+shape.radius = 0.4
+shape.height = 0.1
+
+[node name="PlatformVisual" type="MeshInstance3D" parent="BalanceScaleRoot/LeftPlatform"]
+mesh = CylinderMesh.new()
+mesh.top_radius = 0.4
+mesh.bottom_radius = 0.4
+mesh.height = 0.1
+
+[node name="RightPlatform" type="Area3D" parent="BalanceScaleRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.5, 0)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BalanceScaleRoot/RightPlatform"]
+shape = CylinderShape3D.new()
+shape.radius = 0.4
+shape.height = 0.1
+
+[node name="PlatformVisual" type="MeshInstance3D" parent="BalanceScaleRoot/RightPlatform"]
+mesh = CylinderMesh.new()
+mesh.top_radius = 0.4
+mesh.bottom_radius = 0.4
+mesh.height = 0.1
+
+[node name="EquationGenerator" type="Node" parent="."]
+script = ExtResource("equation_script")
+
+[node name="EquationDisplay" type="CanvasLayer" parent="."]
+layer = 5
+
+[node name="EquationPanel" type="Panel" parent="EquationDisplay"]
+offset_left = 50.0
+offset_top = 50.0
+offset_right = 450.0
+offset_bottom = 120.0
+
+[node name="EquationLabel" type="Label" parent="EquationDisplay/EquationPanel"]
+offset_left = 20.0
+offset_top = 15.0
+offset_right = 380.0
+offset_bottom = 55.0
+text = "Balance: 3 + X = 8"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HintButton" type="Button" parent="EquationDisplay"]
+offset_left = 380.0
+offset_top = 50.0
+offset_right = 450.0
+offset_bottom = 90.0
+text = "Hint"
+
+[node name="ProgressUI" type="CanvasLayer" parent="."]
+layer = 8
+
+[node name="ProgressBar" type="ProgressBar" parent="ProgressUI"]
+offset_left = 100.0
+offset_top = 20.0
+offset_right = 400.0
+offset_bottom = 45.0
+value = 0.0
+show_percentage = false
+
+[node name="LevelLabel" type="Label" parent="ProgressUI"]
+offset_left = 100.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 70.0
+text = "Level 1/10"
+
+[connection signal="scale_balanced" from="BalanceScaleRoot" to="." method="_on_scale_balanced"]
+[connection signal="weight_placed" from="BalanceScaleRoot" to="." method="_on_weight_placed"]
+[connection signal="hint_requested" from="EquationGenerator" to="." method="_on_hint_requested"]
+[connection signal="pressed" from="EquationDisplay/HintButton" to="EquationGenerator" method="request_hint"]
